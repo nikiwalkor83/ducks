@@ -1,0 +1,38 @@
+---
+title: "Mallard Duck Movement"
+author: "Mikita Liohki"
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(sf)
+```
+
+```{r}
+#| cache: true
+mallards <- readRDS("data/mallards.rds")
+```
+
+```{r}
+library(ggridges)
+
+mallards |>
+  filter(speed <= 30) |>
+  mutate(month = fct_reorder(month, month_num)) |>
+  ggplot(aes(x = speed, y = month, fill = after_stat(x))) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) +
+  scale_fill_viridis_c(option = "turbo") +
+  labs(
+    title    = "Most ducks are barely moving — but autumn has the most active fliers",
+    subtitle = "Distribution of GPS-recorded ground speeds by month (speed ≤ 30 m/s)",
+    x        = "Ground speed (m/s)",
+    y        = NULL,
+    fill     = "Speed",
+    caption  = "Source: Korner, Sauter, Fiedler & Jenni (2016) via Movebank (CC BY)"
+  ) +
+  theme_minimal()
+```
