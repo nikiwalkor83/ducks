@@ -2,4 +2,17 @@
 title: "Mallard Duck Movement"
 author: "Mikita Liohki"
 format: html
+execute:
+  echo: false
 ---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(sf)
+```
+
+```{r}
+#| cache: true
+mallards <- readRDS("data/mallards.rds")
+```

@@ -1,0 +1,55 @@
+---
+title: "Mallard Duck Movement"
+author: "Mikita Liohki"
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(sf)
+```
+
+```{r}
+#| cache: true
+mallards <- readRDS("data/mallards.rds")
+```
+
+```{r}
+world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
+
+mallards_sf <- mallards |>
+  filter(lat >= 47, lat <= 55, long >= 8, long <= 25) |>
+  arrange(duck_id, timestamp)
+
+ggplot() +
+  geom_sf(data = world, fill = "#e8f4f8", color = "gray70", linewidth = 0.2) +
+  geom_path(
+    data = mallards_sf,
+    aes(x = long, y = lat, group = duck_id, color = duck_id),
+    alpha = 0.4, linewidth = 0.3
+  ) +
+  geom_point(
+    data = mallards_sf,
+    aes(x = long, y = lat, color = duck_id),
+    alpha = 0.6, size = 0.8
+  ) +
+  coord_sf(xlim = c(8, 25), ylim = c(47, 55)) +
+  scale_color_viridis_d(option = "turbo") +
+  labs(
+    title    = "Mallard duck GPS fixes, 2007–2017",
+    subtitle = "Each color is one individual duck; lines show movement paths",
+    x        = NULL,
+    y        = NULL,
+    caption  = "Source: Korner, Sauter, Fiedler & Jenni (2016) via Movebank (CC BY)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text        = element_blank(),
+    axis.ticks       = element_blank(),
+    legend.position  = "none",
+    panel.background = element_rect(fill = "#d0e8f0", color = NA)
+  )
+```
